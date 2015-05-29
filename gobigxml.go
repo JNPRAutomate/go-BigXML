@@ -39,7 +39,7 @@ func main() {
 		}
 	}()
 
-	f, _ := os.Open("test.xml")
+	f, _ := os.Open("/Users/rcameron/Desktop/show_routes-27MAY2015.xml")
 	d := xml.NewDecoder(f)
 
 	for {
