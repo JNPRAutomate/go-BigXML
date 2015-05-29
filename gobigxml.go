@@ -29,14 +29,17 @@ func main() {
 			select {
 			case s, open := <-gchan:
 				if open {
-					g.AddNode("RouteGraph", s, nil)
+					m := make(map[string]string)
+					m["food"] = "cheese"
+					m["hair"] = "brown"
+					g.AddSubGraph("RouteGraph", s, m)
 					wg.Done()
 				}
 			}
 		}
 	}()
 
-	f, _ := os.Open("/Users/rcameron/Desktop/show_routes-27MAY2015.xml")
+	f, _ := os.Open("test.xml")
 	d := xml.NewDecoder(f)
 
 	for {
@@ -48,6 +51,7 @@ func main() {
 		case xml.StartElement:
 			//log.Println(se)
 			path = append(path, se.Name.Local)
+			g.AddNode("RouteGraph", se.Name.Local, nil)
 		case xml.EndElement:
 			//log.Println(se)
 			path = append(path[:len(path)-1], path[len(path):]...)
@@ -55,6 +59,8 @@ func main() {
 			v := strings.TrimSpace(string(se))
 			if len(v) > 0 {
 				log.Println(path, v)
+				g.AddNode(path[len(path)-1], v, nil)
+				g.AddEdge(path[len(path)-1], v, true, nil)
 				//wg.Add(1)
 				//gchan <- v
 				//g.AddNode("RouteGraph", v, nil)
